@@ -4,7 +4,7 @@ USER 0
 RUN chown -R 1001:0 /builder
 USER 1001
 WORKDIR /builder
-RUN go build . && pwd && ls -ah
+RUN go build .
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal AS runner
 RUN mkdir /app
