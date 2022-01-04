@@ -17,6 +17,13 @@ import (
  * Sample output from ecowitt custom settings. Updated every 60 seconds.
  * Varys depending on sensors connected to the wireless gateway.
  */
+//  POST /weather HTTP/1.1
+//  HOST: 192.168.1.124
+//  Connection: Close
+//  Content-Type: application/x-www-form-urlencoded
+//  Content-Length:552
+//  PASSKEY=0538D7FAACF0A4E894561405A3D7C56F&stationtype=GW1000_V1.6.8&dateutc=2022-01-04+15:08:22&tempinf=77.5&humidityin=59&baromrelin=29.521&baromabsin=29.521&tempf=75.2&humidity=78&winddir=234&windspeedmph=1.79&windgustmph=4.47&maxdailygust=6.93&solarradiation=0.00&uv=0&rainratein=0.000&eventrainin=0.000&hourlyrainin=0.000&dailyrainin=0.000&weeklyrainin=0.071&monthlyrainin=0.571&yearlyrainin=0.571&totalrainin=0.571&temp1f=75.74&humidity1=79&soilmoisture1=34&soilmoisture2=61&wh65batt=0&batt1=0&soilbatt1=1.4&soilbatt2=1.4&freq=433M&model=GW1000_Pro
+//
 // map[
 // 	"PASSKEY":["0538D7FAACF0A4E894561405A3D7C56F"]	// gateway
 // 	"baromabsin":["29.855"]							// gateway
