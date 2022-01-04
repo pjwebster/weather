@@ -1,7 +1,7 @@
 package airgradient
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -26,6 +26,15 @@ const (
 // Response Code: 200
 // Response Data: {"timestamp":1641301497000,"date":"23:04:57","pm02":0,"pm02_clr":"green","pm02_lbl":"Good","pm02_idx":1,"pm02_raw":1,"pi02":0,"pi02_min":0,"pi02_max":0,"pi02_clr":"green","pi02_lbl":"Good","pi02_idx":1,"atmp":27.1,"rhum":49,"rco2":582,"rco2_clr":"green","rco2_lbl":"Excellent","rco2_idx":1,"wifi":-50,"heatindex":27.4,"heatindex_clr":"green","heatindex_lbl":"Good","heatindex_idx":1,"heat_index_fahrenheit":81,"heat_index_celsius":27.4,"atmp_fahrenheit":81,"c19_score":0,"c19_score_lbl":"very low"}
 
+// POST /airgradient HTTP/1.1
+// Host: 192.168.1.124:8090
+// User-Agent: ESP8266HTTPClient
+// Accept-Encoding: identity;q=1,chunked;q=0.1,*;q=0
+// Connection: keep-alive
+// content-type: application/json
+// Content-Length: 87
+// {"station_id":"dcf074","wifi":"-45","pm02":"0","rco2":"566","atmp":"26.50","rhum":"53"}
+
 type AirGradientStation struct {
 	Status         AirGradientStationStatus
 	ID             string
@@ -46,41 +55,57 @@ var AG = AirGradientStation{
 	Humidity:       Humidity.Humidity{},
 }
 
+type AirGradientJSON struct {
+	ID             string `json:"station_id"`
+	SignalStrength string `json:"wifi"`
+	PM2dot5        string `json:"pm02"`
+	CO2            string `json:"rco2"`
+	Temperature    string `json:"atmp"`
+	Humidity       string `json:"rhum"`
+}
+
 func ReportHandler(w http.ResponseWriter, req *http.Request) {
-	if err := req.ParseForm(); err != nil {
-		fmt.Printf("ParseForm() err: %v", err)
+	var m AirGradientJSON
+
+	if req.Body == nil {
+		http.Error(w, "Please send a request body", 400)
 		return
 	}
 
-	fmt.Printf("%q\n", req.PostForm)
+	// fmt.Printf("%q\n", req.Body)
 
-	if req.PostForm.Get("station_id") != "" {
-		// Indicate the structure is being updated
-		AG.Status = NotReady
-
-		AG.ID = req.PostForm.Get("station_id")
-
-		if rssi, err := strconv.ParseInt(req.PostForm.Get("wifi"), 10, 64); err == nil {
-			AG.SignalStrength = rssi
-		}
-
-		if value, err := strconv.ParseUint(req.PostForm.Get("pm02"), 10, 64); err == nil {
-			AG.PM2dot5 = value
-		}
-
-		if value, err := strconv.ParseUint(req.PostForm.Get("rco2"), 10, 64); err == nil {
-			AG.CO2 = value
-		}
-
-		if value, err := strconv.ParseFloat(req.PostForm.Get("atmp"), 64); err == nil {
-			AG.Temperature = Temperature.New(value, Temperature.Celsius)
-		}
-
-		if value, err := strconv.ParseInt(req.PostForm.Get("rhum"), 10, 64); err == nil {
-			AG.Humidity = Humidity.New(value)
-		}
-
-		// Indicate the structure has finished updating
-		AG.Status = Ready
+	if err := json.NewDecoder(req.Body).Decode(&m); err != nil {
+		http.Error(w, err.Error(), 400)
+		return
 	}
+
+	// if req.PostForm.Get("station_id") != "" {
+	// Indicate the structure is being updated
+	AG.Status = NotReady
+
+	AG.ID = m.ID
+
+	if rssi, err := strconv.ParseInt(m.SignalStrength, 10, 64); err == nil {
+		AG.SignalStrength = rssi
+	}
+
+	if value, err := strconv.ParseUint(m.PM2dot5, 10, 64); err == nil {
+		AG.PM2dot5 = value
+	}
+
+	if value, err := strconv.ParseUint(m.CO2, 10, 64); err == nil {
+		AG.CO2 = value
+	}
+
+	if value, err := strconv.ParseFloat(m.Temperature, 64); err == nil {
+		AG.Temperature = Temperature.New(value, Temperature.Celsius)
+	}
+
+	if value, err := strconv.ParseInt(m.Humidity, 10, 64); err == nil {
+		AG.Humidity = Humidity.New(value)
+	}
+
+	// Indicate the structure has finished updating
+	AG.Status = Ready
+	// }
 }
