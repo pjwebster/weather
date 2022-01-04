@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"neverending.dev/weather/airgradient"
 	"neverending.dev/weather/ecowitt"
 	"neverending.dev/weather/measurement/Pressure"
 	"neverending.dev/weather/measurement/Rainfall"
@@ -56,6 +57,14 @@ func generateWeatherReport() map[string]string {
 			keystr = fmt.Sprintf("ecowitt_soil_sensor_%d_battery", i)
 			report[keystr] = fmt.Sprintf("%.2v", sensor.Battery)
 		}
+	}
+
+	if airgradient.AG.Status == airgradient.Ready {
+		report["airgradient_rssi"] = fmt.Sprintf("%d", airgradient.AG.SignalStrength)
+		report["airgradient_temperature"] = airgradient.AG.Temperature.ToStringAs(Temperature.Celsius)
+		report["airgradient_humidity"] = airgradient.AG.Humidity.ToString()
+		report["airgradient_co2"] = fmt.Sprintf("%d", airgradient.AG.CO2)
+		report["airgradient_pm2dot5"] = fmt.Sprintf("%d", airgradient.AG.PM2dot5)
 	}
 
 	return report
