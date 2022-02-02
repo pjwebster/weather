@@ -315,7 +315,7 @@ func ReportHandler(w http.ResponseWriter, req *http.Request) {
 		if v, err := strconv.ParseUint(req.PostForm.Get("lightning_num"), 10, 64); err == nil {
 			WS.Lightning.Count = v
 		}
-		if v, err := strconv.ParseUint(req.PostForm.Get("lightning"), 10, 64); err == nil {
+		if v, err := strconv.ParseUint(req.PostForm.Get("lightning_time"), 10, 64); err == nil {
 			WS.Lightning.Time = v
 		}
 		if v, err := strconv.ParseUint(req.PostForm.Get("wh57batt"), 10, 64); err == nil {
