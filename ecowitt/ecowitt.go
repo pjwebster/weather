@@ -138,6 +138,14 @@ type WeatherStation struct {
 	Outdoor             OutdoorSensorArray
 	TemperatureHumidity []TemperatureHumiditySensor
 	SoilMoisture        []SoilSensor
+	Lightning           LightningSensor
+}
+
+// LigthningSensor holds the data for an Ecowitt WH57 lightning sensor
+type LightningSensor struct {
+	Distance uint64
+	Count    uint64
+	Time     uint64
 }
 
 var WS = WeatherStation{
@@ -173,6 +181,11 @@ var WS = WeatherStation{
 	},
 	TemperatureHumidity: []TemperatureHumiditySensor{},
 	SoilMoisture:        []SoilSensor{},
+	Lightning: LightningSensor{
+		Distance: 0,
+		Count:    0,
+		Time:     0,
+	},
 }
 
 func ReportHandler(w http.ResponseWriter, req *http.Request) {
@@ -291,6 +304,19 @@ func ReportHandler(w http.ResponseWriter, req *http.Request) {
 				}
 				WS.SoilMoisture = append(WS.SoilMoisture, *ss)
 			}
+		}
+
+		// WH57 Lightning sensor
+		if v, err := strconv.ParseUint(req.PostForm.Get("lightning"), 10, 64); err == nil {
+			WS.Lightning.Distance = v
+		}
+
+		if v, err := strconv.ParseUint(req.PostForm.Get("lightning_num"), 10, 64); err == nil {
+			WS.Lightning.Count = v
+		}
+
+		if v, err := strconv.ParseUint(req.PostForm.Get("lightning"), 10, 64); err == nil {
+			WS.Lightning.Time = v
 		}
 
 		// Indicate the structure has finished updating
