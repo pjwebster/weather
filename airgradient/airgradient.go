@@ -2,7 +2,6 @@ package airgradient
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -80,8 +79,9 @@ func ReportHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	j, _ := json.MarshalIndent(m, "", "  ")
-	fmt.Println(string(j))
+	//j, _ := json.MarshalIndent(m, "", "  ")
+	//fmt.Println(string(j))
+
 	// if req.PostForm.Get("station_id") != "" {
 	// Indicate the structure is being updated
 	AG.Status = NotReady

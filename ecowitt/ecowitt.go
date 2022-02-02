@@ -181,7 +181,7 @@ func ReportHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	//fmt.Printf("%q\n", req.PostForm)
+	fmt.Printf("%q\n", req.PostForm)
 
 	if req.PostForm.Get("stationtype") != "" {
 		//WS := new(WeatherStation)
