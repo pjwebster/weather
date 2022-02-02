@@ -57,6 +57,11 @@ func generateWeatherReport() map[string]string {
 			keystr = fmt.Sprintf("ecowitt_soil_sensor_%d_battery", i)
 			report[keystr] = fmt.Sprintf("%.2v", sensor.Battery)
 		}
+
+		report["ecowitt_lightning"] = fmt.Sprintf("%d", ecowitt.WS.Lightning.Distance)
+		report["ecowitt_lightning_count"] = fmt.Sprintf("%d", ecowitt.WS.Lightning.Count)
+		report["ecowitt_lightning_time"] = fmt.Sprintf("%d", ecowitt.WS.Lightning.Time)
+		report["ecowitt_lightning_battery"] = fmt.Sprintf("%d", ecowitt.WS.Lightning.Battery)
 	}
 
 	if airgradient.AG.Status == airgradient.Ready {

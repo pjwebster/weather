@@ -146,6 +146,7 @@ type LightningSensor struct {
 	Distance uint64
 	Count    uint64
 	Time     uint64
+	Battery  uint64
 }
 
 var WS = WeatherStation{
@@ -185,6 +186,7 @@ var WS = WeatherStation{
 		Distance: 0,
 		Count:    0,
 		Time:     0,
+		Battery:  0,
 	},
 }
 
@@ -310,13 +312,14 @@ func ReportHandler(w http.ResponseWriter, req *http.Request) {
 		if v, err := strconv.ParseUint(req.PostForm.Get("lightning"), 10, 64); err == nil {
 			WS.Lightning.Distance = v
 		}
-
 		if v, err := strconv.ParseUint(req.PostForm.Get("lightning_num"), 10, 64); err == nil {
 			WS.Lightning.Count = v
 		}
-
 		if v, err := strconv.ParseUint(req.PostForm.Get("lightning"), 10, 64); err == nil {
 			WS.Lightning.Time = v
+		}
+		if v, err := strconv.ParseUint(req.PostForm.Get("wh57batt"), 10, 64); err == nil {
+			WS.Lightning.Battery = v
 		}
 
 		// Indicate the structure has finished updating
